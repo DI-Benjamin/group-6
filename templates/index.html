@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Deploy docker container</h1>
+    <div class="container p-5" style="text-align: center;">
+        <form method="POST" style="margin-left:30%;margin-right: 30%;">
+            <div class="form-floating mb-3" >
+            <h4>Instance type</h4>
+            <select class="btn btn-secondary dropdown-toggle form-control" name="type" id="type">
+                <option class="dropdown-item" value="0">Wordpress</option>
+                <option class="dropdown-item" value="1">Apache2</option>
+            </select>
+            </div>
+            <div class="form-floating mb-3" >
+            <h4>Performance tier</h4>
+            <select class="btn btn-secondary dropdown-toggle form-control" name="tier" id="tier">
+                <option class="dropdown-item" value="0">t2.micro</option>
+                <option class="dropdown-item" value="1">t2.small</option>
+                <option class="dropdown-item" value="2">t2.medium</option>
+                <option class="dropdown-item" value="3">t2.large</option>
+                <option class="dropdown-item" value="4">t2.xlarge</option>
+            </select>
+            </div>
+            <div class="form-floating mb-3" >
+            <h4>Region</h4>
+            <select class="btn btn-secondary dropdown-toggle form-control" name="region" id="region">
+                <option class="dropdown-item" value="0">Frankfurt</option>
+                <option class="dropdown-item" value="1">Ireland</option>
+                <option class="dropdown-item" value="2">London</option>
+                <option class="dropdown-item" value="3">Paris</option>
+                <option class="dropdown-item" value="4">Stockholm</option>
+            </select>
+            </div>
+            <div class="form-floating mb-3">
+                <input class="form-control" type="text" id="name" name="name">
+                <label for="name">Instance name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input class="form-control" type="text" id="link" name="link">
+                <label for="link">Github Link</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input class="form-control" type="submit" class="btn btn-primary" value="Submit">
+            </div>
+        </form>
+    </div>
+{% endblock %}

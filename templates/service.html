@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Create a support ticket</h1>
+    <div class="container p-5" style="text-align: center;">
+        <form method="POST" style="margin-left:30%;margin-right: 30%;">
+            <div class="form-floating mb-3" >
+            <h4>Category</h4>
+            <select class="btn btn-secondary dropdown-toggle form-control" name="type" id="type">
+                <option class="dropdown-item" value="1">Billing question</option>
+                <option class="dropdown-item" value="2">Performance issue</option>
+                <option class="dropdown-item" value="3">Availability issue</option>
+                <option class="dropdown-item" value="4">Other</option>
+            </select>
+            </div>
+            <div class="form-floating mb-3">
+                <input class="form-control" type="text" id="content" name="content">
+                <label for="name">Describe the issue</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input class="form-control" type="submit" class="btn btn-primary" value="Submit">
+            </div>
+        </form>
+    </div>
+{% endblock %}

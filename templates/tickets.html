@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Instance status</h1>
+<div class="container" style="text-align: center;">
+    <table class="table">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">IP address</th>
+            <th scope="col">Performance tier</th>
+            <th scope="col">Delete</th>
+            <th scope="col">Status</th>
+        </tr>
+        {% for deployment in deployments %}
+        <tr>
+            <td>{{tickets.type}}</td>
+            <td>185.63.3.116 </td>
+            <td>{{tickets.content}}</td>
+            <td><a href="">Complete</a></td>
+            <td>Active</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}
