@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import bcrypt, datetime, requests, json
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mhdqny5muz8NDT3gjv@65.109.63.215:2010/pretendifydb'
 db = SQLAlchemy(app)
 app.secret_key = 'secret_key'
 
