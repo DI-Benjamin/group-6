@@ -5,5 +5,5 @@ services:
     image:  stijnch/pretendify-website:latest
     container_name: pretendify-website
     ports:
-      - "2011:80"
+      - "2011:5000"
     network_mode: 'bridge'
