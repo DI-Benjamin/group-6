@@ -5,4 +5,4 @@ Werkzeug==2.0.1
 bcrypt==3.2.2
 requests==2.27.1
 SQLAlchemy==1.4.32
-python-mysqldb
+mysqlclient==2.2.4
