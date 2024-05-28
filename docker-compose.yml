@@ -1,0 +1,9 @@
+version: '3'
+services:
+  website:
+    restart: always
+    image:  Dockerfile
+    container_name: pretendify-website
+    ports:
+      - "2011:80"
+    network_mode: 'bridge'
