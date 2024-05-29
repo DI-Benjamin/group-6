@@ -1,0 +1,9 @@
+version: '3'
+services:
+  website:
+    restart: always
+    image:  stijnch/pretendify-website:latest
+    container_name: pretendify-website
+    ports:
+      - "2011:5000"
+    network_mode: 'bridge'
