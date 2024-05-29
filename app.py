@@ -20,11 +20,9 @@ def request_infrastructure(github,region,type_n,tier,email,name):
         "email" : email,
         "name" : name
     }
-    data = json.dumps(request, indent = 4)
-    print(data)
     api_gateway_url = 'https://adl6r3xk3m.execute-api.eu-central-1.amazonaws.com/prod/infrastructure'
-    response = requests.post(api_gateway_url, json=data)
-    print(jsonify(response.json()))
+    response = requests.post(api_gateway_url, json=request)
+    print("Response:", response.status_code, response.text)
     return
 
 
