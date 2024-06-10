@@ -73,23 +73,6 @@ class Deployments(db.Model):
         self.tier = tier
         self.company = company
         self.user = user
-    
-class Tickets(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.Integer, nullable=False)
-    content = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.Boolean, default=False)
-    submission_time = db.Column(db.DateTime, default=datetime.datetime.now)
-    resolved_time = db.Column(db.DateTime, nullable=True)
-    company = db.Column(db.Integer, db.ForeignKey(Company.id))
-    user = db.Column(db.Integer, db.ForeignKey(User.id))
-    resolved_by = db.Column(db.Integer, db.ForeignKey(User.id), nullable=True)
-
-def __init__(self,type,content,company,user):
-        self.type = type
-        self.content = content
-        self.company = company
-        self.user = user
 
 with app.app_context():
     db.create_all()
@@ -112,19 +95,6 @@ def home():
         return redirect(url_for("login"))
     return render_template('index.html')
 
-@app.route("/help", methods=['GET', 'POST'])
-def help():
-    if 'id' in session:
-        if request.method == 'POST':
-            content = request.form["content"]
-            type = int(request.form["type"])
-            new_ticket = Tickets(type=type,content=content,company=session['company'],user=session['id'])
-            db.session.add(new_ticket)
-            db.session.commit()
-            return redirect(url_for("status"))
-    else:
-        return redirect(url_for("login"))
-    return render_template('service.html')
 
 @app.route("/status")
 def status():
@@ -138,11 +108,6 @@ def status():
 def all_status():
     deployments = Deployments.query
     return render_template("status.html",deployments=deployments)
-
-@app.route("/admin/tickets")
-def all_tickets():
-    tickets = Tickets.query
-    return render_template("tickets.html",tickets=tickets.reverse())
 
 @app.route("/about")
 def about():
