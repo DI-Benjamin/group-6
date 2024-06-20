@@ -1,32 +1,37 @@
-from flask import Flask, render_template, request, redirect, url_for ,session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
-import bcrypt, datetime, requests, json
+from secrets import *
+import bcrypt, datetime, requests, json, boto3
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mhdqny5muz8NDT3gjv@65.109.63.215:2010/pretendifydb'
 db = SQLAlchemy(app)
 app.secret_key = 'secret_key'
 
-tiers = ["t2.micro","t2.small","t2.medium","t2.large","t2.xlarge"]
-regions = ["eu-central-1","eu-west-1","eu-west-2","eu-west-3","eu-north-1"]
-types = ["module_1","module_2"]
+# Initialize the boto3 client
+ecs_client = boto3.client('ecs', region_name=AWS_REGION,
+                          aws_access_key_id=AWS_ACCESS_KEY,
+                          aws_secret_access_key=AWS_SECRET_KEY)
 
-def request_infrastructure(github,region,type_n,tier,email,name):
-    request = {
-        "github" : github,
-        "region" : regions[region],
-        "type" : types[type_n],
-        "tier" : tiers[tier],
-        "email" : email,
-        "name" : name
+types = ["module_1"]
+
+def request_infrastructure(type_n, email, name):
+    request_payload = {
+        "input": json.dumps({
+            "type": types[type_n],
+            "email": email,
+            "name": name
+        }),
+        "name": name,
+        "stateMachineArn": STATE_MACHINE_ARN
     }
-    api_gateway_url = 'https://adl6r3xk3m.execute-api.eu-central-1.amazonaws.com/production/infrastructure'
-    response = requests.post(api_gateway_url, json=request)
+    api_gateway_url = API_GATEWAY_URL
+    response = requests.post(api_gateway_url, json=request_payload)
     print("Response:", response.status_code, response.text)
     return
 
 
-#Database tables
+# Database tables
 class Company(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -34,7 +39,7 @@ class Company(db.Model):
     phone = db.Column(db.String(16), unique=True)
     users = db.relationship('User', backref='user')
 
-    def __init__(self,email,phone,name):
+    def __init__(self, email, phone, name):
         self.name = name
         self.email = email
         self.phone = phone
@@ -47,30 +52,25 @@ class User(db.Model):
     IsAdmin = db.Column(db.Boolean, default=False)
     company = db.Column(db.Integer, db.ForeignKey(Company.id))
 
-    def __init__(self,email,password,name,company):
+    def __init__(self, email, password, name, company):
         self.name = name
         self.email = email
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.company = company
-    
-    def check_password(self,password):
-        return bcrypt.checkpw(password.encode('utf-8'),self.password.encode('utf-8'))
 
-    
+    def check_password(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+
 class Deployments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    github = db.Column(db.String(100), unique=True)
     type = db.Column(db.Integer)
-    tier = db.Column(db.Integer)
     company = db.Column(db.Integer, db.ForeignKey(Company.id))
     user = db.Column(db.Integer, db.ForeignKey(User.id))
 
-    def __init__(self,name,github,type,tier,company,user):
+    def __init__(self, name, type, company, user):
         self.name = name
-        self.github = github
         self.type = type
-        self.tier = tier
         self.company = company
         self.user = user
 
@@ -82,32 +82,16 @@ def home():
     if 'id' in session:
         if request.method == 'POST':
             name = request.form["name"]
-            tier = int(request.form["tier"])
-            link = request.form["link"]
             type = int(request.form["type"])
-            region = int(request.form["region"])
-            new_deployment = Deployments(name=name,github=link,type=type,tier=tier,user=session['id'],company=session['company'])
+            new_deployment = Deployments(name=name, type=type, user=session['id'],
+                                         company=session['company'])
             db.session.add(new_deployment)
             db.session.commit()
-            request_infrastructure(link,region,type,tier,session['email'],name)
-            return redirect(url_for("status"))
+            request_infrastructure(type, session['email'], name)
+            return redirect(url_for("list_clusters"))
     else:
         return redirect(url_for("login"))
     return render_template('index.html')
-
-
-@app.route("/status")
-def status():
-    if 'id' in session:
-        deployments = Deployments.query.filter_by(user=session['id'])
-        return render_template("status.html",deployments=deployments)
-    else:
-        return redirect(url_for("login"))
-
-@app.route("/admin/status")
-def all_status():
-    deployments = Deployments.query
-    return render_template("status.html",deployments=deployments)
 
 @app.route("/about")
 def about():
@@ -119,54 +103,48 @@ def delete(id):
     if to_delete:
         db.session.delete(to_delete)
         db.session.commit()
-
     return redirect(url_for("status"))
-    
 
-@app.route('/login',methods=['GET','POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
 
         user = User.query.filter_by(email=email).first()
-        
+
         if user and user.check_password(password):
             session['id'] = user.id
             session['company'] = user.company
             session['email'] = user.email
             return redirect(url_for("home"))
         else:
-            return render_template('login.html',error='Invalid user')
+            return render_template('login.html', error='Invalid user')
     return render_template('login.html')
 
-@app.route('/admin/add/user',methods=['GET','POST'])
+@app.route('/admin/add/user', methods=['GET', 'POST'])
 def add_user():
     if request.method == 'POST':
-        # handle request
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
         company = int(request.form['company'])
 
-        new_user = User(name=name,email=email,password=password,company=company)
+        new_user = User(name=name, email=email, password=password, company=company)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for("home"))
     companies = Company.query.all()
-    print(companies)
-    return render_template('register.html',companies=companies)
+    return render_template('register.html', companies=companies)
 
-@app.route('/admin/add/company',methods=['GET','POST'])
+@app.route('/admin/add/company', methods=['GET', 'POST'])
 def add_company():
     if request.method == 'POST':
-        # handle request
         name = request.form['name']
         email = request.form['email']
         phone = request.form['phone']
 
-        new_company = Company(name=name,email=email,phone=phone)
-        print(name)
+        new_company = Company(name=name, email=email, phone=phone)
         db.session.add(new_company)
         db.session.commit()
         return redirect(url_for("home"))
@@ -183,6 +161,18 @@ def logout():
     session.pop('company')
     session.pop('email')
     return redirect(url_for("login"))
+
+@app.route("/list-clusters", methods=['GET'])
+def list_clusters():
+    if 'id' in session:
+        try:
+            clusters_response = ecs_client.list_clusters()
+            cluster_arns = clusters_response.get('clusterArns', [])
+            return render_template('clusters.html', clusters=cluster_arns)
+        except Exception as e:
+            return render_template('error.html', message="An error occurred: {}".format(e))
+    else:
+        return redirect(url_for("login"))
 
 if __name__ == '__main__':
     app.run(debug=True)
