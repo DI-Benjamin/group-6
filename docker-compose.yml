@@ -13,3 +13,5 @@ services:
         restart: always
         tty: true
         image: stijnch/pretendify-website:latest
+        env_file:
+            - stack.env
