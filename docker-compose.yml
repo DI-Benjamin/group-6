@@ -1,11 +1,15 @@
 version: '3.8'
 
+name: pretendify
 services:
-  web:
-    restart: always
-    image: stijnch/pretendify-website:latest
-    ports:
-      - "2011:5000"
-    volumes:
-      - .:/app
-    network_mode: 'bridge'
+    website:
+        environment:
+            - FLASK_APP=app.py
+            - FLASK_RUN_HOST=0.0.0.0
+        network_mode: bridge
+        working_dir: /app
+        ports:
+            - 2011:5000
+        restart: always
+        tty: true
+        image: stijnch/pretendify-website:latest
