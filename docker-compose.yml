@@ -6,9 +6,6 @@ services:
     image: stijnch/pretendify-website:latest
     ports:
       - "2011:5000"
-    environment:
-      FLASK_APP: app.py
-      FLASK_RUN_HOST: 0.0.0.0
     volumes:
       - .:/app
     network_mode: 'bridge'
