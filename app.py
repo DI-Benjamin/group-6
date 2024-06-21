@@ -1,17 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from secrets import *
 import bcrypt, datetime, requests, json, boto3
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mhdqny5muz8NDT3gjv@65.109.63.215:2010/pretendifydb'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
-app.secret_key = 'secret_key'
+app.secret_key = os.getenv('SECRET_KEY')
 
 # Initialize the boto3 client
-ecs_client = boto3.client('ecs', region_name=AWS_REGION,
-                          aws_access_key_id=AWS_ACCESS_KEY,
-                          aws_secret_access_key=AWS_SECRET_KEY)
+ecs_client = boto3.client(
+    'ecs',
+    region_name=os.getenv('AWS_REGION'),
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_KEY')
+)
 
 types = ["module_1"]
 
@@ -23,13 +30,12 @@ def request_infrastructure(type_n, email, name):
             "name": name
         }),
         "name": name,
-        "stateMachineArn": STATE_MACHINE_ARN
+        "stateMachineArn": os.getenv('STATE_MACHINE_ARN')
     }
-    api_gateway_url = API_GATEWAY_URL
+    api_gateway_url = os.getenv('API_GATEWAY_URL')
     response = requests.post(api_gateway_url, json=request_payload)
     print("Response:", response.status_code, response.text)
     return
-
 
 # Database tables
 class Company(db.Model):
@@ -83,8 +89,7 @@ def home():
         if request.method == 'POST':
             name = request.form["name"]
             type = int(request.form["type"])
-            new_deployment = Deployments(name=name, type=type, user=session['id'],
-                                         company=session['company'])
+            new_deployment = Deployments(name=name, type=type, user=session['id'], company=session['company'])
             db.session.add(new_deployment)
             db.session.commit()
             request_infrastructure(type, session['email'], name)
