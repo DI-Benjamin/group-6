@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
-import bcrypt, datetime, requests, json, boto3, flask_admin
+import bcrypt, requests, json, boto3
 from dotenv import load_dotenv
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -77,6 +77,10 @@ with app.app_context():
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
+    return render_template('index.html')
+
+@app.route("/deploy", methods=['GET', 'POST'])
+def deploy():
     if 'id' in session:
         if request.method == 'POST':
             name = request.form["name"]
@@ -88,7 +92,7 @@ def home():
             return redirect(url_for("list_clusters"))
     else:
         return redirect(url_for("login"))
-    return render_template('index.html')
+    return render_template('deploy.html')
 
 @app.route("/about")
 def about():

@@ -15,7 +15,7 @@
               </button>
               <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                  <a class="nav-link" href="{{url_for('home')}}">Deploy</a>
+                  <a class="nav-link" href="{{url_for('deploy')}}">Deploy</a>
                   <a class="nav-link" href="{{url_for('about')}}">About us</a>
                   <a class="nav-link" href="{{url_for('list_clusters')}}">Instance status</a>
                   {% if session['admin']  ==  True %}
