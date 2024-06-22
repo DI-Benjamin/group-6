@@ -147,7 +147,7 @@ def list_clusters():
             cluster_arns = clusters_response.get('clusterArns', [])
             return render_template('clusters.html', clusters=cluster_arns)
         except Exception as e:
-            return render_template('error.html', message="An error occurred: {}".format(e))
+            return redirect(url_for("home"))
     else:
         return redirect(url_for("login"))
 
