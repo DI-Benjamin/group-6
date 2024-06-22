@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
-import bcrypt, datetime, requests, json, boto3
+import bcrypt, datetime, requests, json, boto3, flask_admin
 from dotenv import load_dotenv
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 import os
 
 # Load environment variables from .env file
@@ -11,6 +13,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 app.secret_key = os.getenv('SECRET_KEY')
+
+admin = Admin()
+admin.init_app(app)
 
 # Initialize the boto3 client
 ecs_client = boto3.client(
@@ -63,6 +68,9 @@ class Deployments(db.Model):
         self.name = name
         self.type = type
         self.user = user
+
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Deployments, db.session))
 
 with app.app_context():
     db.create_all()
@@ -123,13 +131,6 @@ def add_user():
         db.session.commit()
         return redirect(url_for("home"))
     return render_template('register.html')
-
-@app.route('/admin')
-def admin():
-    if session["admin"] == True:
-        return render_template('admin.html')
-    else:
-        return redirect(url_for("home"))
 
 @app.route("/logout")
 def logout():
