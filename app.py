@@ -122,12 +122,13 @@ def login():
             session['id'] = user.id
             session['company'] = user.company
             session['email'] = user.email
+            session['admin'] = user.IsAdmin
             return redirect(url_for("home"))
         else:
             return render_template('login.html', error='Invalid user')
     return render_template('login.html')
 
-@app.route('/admin/add/user', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def add_user():
     if request.method == 'POST':
         name = request.form['name']
@@ -144,27 +145,33 @@ def add_user():
 
 @app.route('/admin/add/company', methods=['GET', 'POST'])
 def add_company():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        phone = request.form['phone']
+    if session["admin"] == True:
+        if request.method == 'POST':
+            name = request.form['name']
+            email = request.form['email']
+            phone = request.form['phone']
 
-        new_company = Company(name=name, email=email, phone=phone)
-        db.session.add(new_company)
-        db.session.commit()
+            new_company = Company(name=name, email=email, phone=phone)
+            db.session.add(new_company)
+            db.session.commit()
+            return redirect(url_for("home"))
+    else:
         return redirect(url_for("home"))
-
     return render_template('company.html')
 
 @app.route('/admin')
 def admin():
-    return render_template('admin.html')
+    if session["admin"] == True:
+        return render_template('admin.html')
+    else:
+        return redirect(url_for("home"))
 
 @app.route("/logout")
 def logout():
     session.pop('id')
     session.pop('company')
     session.pop('email')
+    session.pop('admin')
     return redirect(url_for("login"))
 
 @app.route("/list-clusters", methods=['GET'])

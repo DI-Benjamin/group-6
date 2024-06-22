@@ -1,13 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Deploy docker container</h1>
+<h1>Admin page</h1>
     <div class="container p-5" style="text-align: center;">
         <div class="btn-group-lg btn-group-vertical">
             <div class="mb-3">
                 <a  class="btn btn-primary" href="{{url_for('add_company')}}">Add a company</a>
-            </div>
-            <div class="mb-3">
-                <a  class="btn btn-primary" href="{{url_for('add_user')}}">Add a user</a>
             </div>
             <div class="mb-3">
                 <a  class="btn btn-primary" href="{{url_for('all_status')}}">View all instances</a>
