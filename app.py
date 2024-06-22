@@ -4,6 +4,7 @@ import bcrypt, requests, json, boto3
 from dotenv import load_dotenv
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.menu import MenuLink
 import os
 
 # Load environment variables from .env file
@@ -16,6 +17,7 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 admin = Admin()
 admin.init_app(app)
+admin.add_link(MenuLink(name='Return to main site', url=url_for('home')))
 
 # Initialize the boto3 client
 ecs_client = boto3.client(
