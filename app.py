@@ -38,31 +38,17 @@ def request_infrastructure(type_n, email, name):
     return
 
 # Database tables
-class Company(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True)
-    phone = db.Column(db.String(16), unique=True)
-    users = db.relationship('User', backref='user')
-
-    def __init__(self, email, phone, name):
-        self.name = name
-        self.email = email
-        self.phone = phone
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     IsAdmin = db.Column(db.Boolean, default=False)
-    company = db.Column(db.Integer, db.ForeignKey(Company.id))
 
-    def __init__(self, email, password, name, company):
+    def __init__(self, email, password, name):
         self.name = name
         self.email = email
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        self.company = company
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
@@ -71,13 +57,11 @@ class Deployments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     type = db.Column(db.Integer)
-    company = db.Column(db.Integer, db.ForeignKey(Company.id))
     user = db.Column(db.Integer, db.ForeignKey(User.id))
 
-    def __init__(self, name, type, company, user):
+    def __init__(self, name, type, user):
         self.name = name
         self.type = type
-        self.company = company
         self.user = user
 
 with app.app_context():
@@ -89,7 +73,7 @@ def home():
         if request.method == 'POST':
             name = request.form["name"]
             type = int(request.form["type"])
-            new_deployment = Deployments(name=name, type=type, user=session['id'], company=session['company'])
+            new_deployment = Deployments(name=name, type=type, user=session['id'])
             db.session.add(new_deployment)
             db.session.commit()
             request_infrastructure(type, session['email'], name)
@@ -120,7 +104,6 @@ def login():
 
         if user and user.check_password(password):
             session['id'] = user.id
-            session['company'] = user.company
             session['email'] = user.email
             session['admin'] = user.IsAdmin
             return redirect(url_for("home"))
@@ -134,30 +117,12 @@ def add_user():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-        company = int(request.form['company'])
 
-        new_user = User(name=name, email=email, password=password, company=company)
+        new_user = User(name=name, email=email, password=password)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for("home"))
-    companies = Company.query.all()
-    return render_template('register.html', companies=companies)
-
-@app.route('/admin/add/company', methods=['GET', 'POST'])
-def add_company():
-    if session["admin"] == True:
-        if request.method == 'POST':
-            name = request.form['name']
-            email = request.form['email']
-            phone = request.form['phone']
-
-            new_company = Company(name=name, email=email, phone=phone)
-            db.session.add(new_company)
-            db.session.commit()
-            return redirect(url_for("home"))
-    else:
-        return redirect(url_for("home"))
-    return render_template('company.html')
+    return render_template('register.html')
 
 @app.route('/admin')
 def admin():
@@ -169,10 +134,9 @@ def admin():
 @app.route("/logout")
 def logout():
     session.pop('id')
-    session.pop('company')
     session.pop('email')
     session.pop('admin')
-    return redirect(url_for("login"))
+    return redirect(url_for("home"))
 
 @app.route("/list-clusters", methods=['GET'])
 def list_clusters():
