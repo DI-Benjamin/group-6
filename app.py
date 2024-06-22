@@ -75,7 +75,7 @@ admin.add_view(ModelView(Deployments, db.session))
 with app.app_context():
     db.create_all()
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/", methods=['GET'])
 def home():
     return render_template('index.html')
 
