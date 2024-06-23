@@ -1,4 +1,192 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Here goes the page introduction</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pretendify Landing Page</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-primary">
+    <div class="container">
+        <!-- Introduction Section -->
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-12">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">Welcome to Pretendify</h1>
+                        </div>
+                        <p class="lead text-center">Your One-Stop Solution for Web Hosting and Digital Infrastructure</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-12">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-5">
+                        <div class="text-center">
+                            <h2 class="h4 text-gray-900 mb-4">Our Services</h2>
+                        </div>
+                        <ul>
+                            <li><strong>Shared Hosting:</strong> Affordable and easy-to-use web hosting solutions perfect for small to medium-sized websites.</li>
+                            <li><strong>VPS Hosting:</strong> Scalable virtual private servers providing greater flexibility and control.</li>
+                            <li><strong>Dedicated Hosting:</strong> High-performance dedicated servers for resource-intensive applications.</li>
+                            <li><strong>Managed Hosting:</strong> Comprehensive hosting solutions with full management support.</li>
+                            <li><strong>Cloud Hosting:</strong> Scalable cloud infrastructure for businesses needing high availability and performance.</li>
+                        </ul>
+                        <p>Explore more about our services <a href="#">here</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-12">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-5">
+                        <div class="text-center">
+                            <h2 class="h4 text-gray-900 mb-4">Pricing Plans</h2>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4 mb-4">
+                                <div class="card h-100 text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Basic Plan</h5>
+                                        <p class="card-text">$5/month</p>
+                                        <ul>
+                                            <li>1 Website</li>
+                                            <li>10 GB Storage</li>
+                                            <li>Unlimited Bandwidth</li>
+                                        </ul>
+                                        <button class="btn btn-secondary" disabled>Choose Plan</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <div class="card h-100 text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pro Plan</h5>
+                                        <p class="card-text">$15/month</p>
+                                        <ul>
+                                            <li>10 Websites</li>
+                                            <li>50 GB Storage</li>
+                                            <li>Unlimited Bandwidth</li>
+                                        </ul>
+                                        <button class="btn btn-secondary" disabled>Choose Plan</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <div class="card h-100 text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Premium Plan</h5>
+                                        <p class="card-text">$25/month</p>
+                                        <ul>
+                                            <li>Unlimited Websites</li>
+                                            <li>100 GB Storage</li>
+                                            <li>Unlimited Bandwidth</li>
+                                        </ul>
+                                        <button class="btn btn-secondary" disabled>Choose Plan</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p>See full pricing details <a href="#">here</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Us Section -->
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-12">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-5">
+                        <div class="text-center">
+                            <h2 class="h4 text-gray-900 mb-4">About Us</h2>
+                        </div>
+                        <p>Founded in a small garage by technology enthusiasts, Pretendify has evolved from a simple web hosting provider to a comprehensive digital services platform. Our mission is to empower businesses and developers with the tools and support they need to succeed in the digital world.</p>
+                        <p>Discover more about our journey and values <a href="/about">here</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Cards Row -->
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Card Body -->
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h2 class="h4 text-gray-900 mb-4">Our Specialists</h2>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 mb-4">
+                                    <div class="card h-100 text-center">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Stijn Charmant</h5>
+                                            <p class="card-text">DevOps, Cloud engineer, Project manager</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-4">
+                                    <div class="card h-100 text-center">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Janis Kreņgelis</h5>
+                                            <p class="card-text"> Front- and back-end developer</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-4">
+                                    <div class="card h-100 text-center">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Chahid Yahia</h5>
+                                            <p class="card-text">DevOps, Cloud engineer</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-4">
+                                    <div class="card h-100 text-center">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Ayuub Deis</h5>
+                                            <p class="card-text">DevOps, Cloud engineer</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <a class="btn btn-primary" href="/">Go back to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+</body>
+</html>
 {% endblock %}
